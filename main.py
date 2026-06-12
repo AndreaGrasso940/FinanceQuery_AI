@@ -32,7 +32,7 @@ else:
     st.success(f"Dati attivi: tabellone da {len(st.session_state.df)} righe.")
     
     # Pulsante per resettare e caricare un nuovo file
-    if st.sidebar.button("🔄 Carica un nuovo file"):
+    if st.sidebar.button("Carica un nuovo file"):
         st.session_state.df = None
         st.session_state.cronologia = []
         st.rerun()

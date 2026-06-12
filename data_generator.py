@@ -35,7 +35,7 @@ def genera_dati_fittizi(nome_file="bilancio_fittizio.xlsx"):
     df = pd.DataFrame(dati)
     df = df.sort_values(by="Data").reset_index(drop=True)
     df.to_excel(nome_file, index=False)
-    print(f"✅ File '{nome_file}' generato con successo!")
+    print(f" File '{nome_file}' generato con successo!")
 
 if __name__ == "__main__":
     genera_dati_fittizi()
