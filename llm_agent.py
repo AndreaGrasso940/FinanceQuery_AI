@@ -41,12 +41,12 @@ def analizza_dati_con_llm(df, domanda_utente):
         valore_esatto = ambiente_locale.get('risultato')
 
         if valore_esatto is None:
-            return f"⚠️ Il codice è stato eseguito, ma non ha salvato nulla nella variabile 'risultato'.\n\nCodice generato:\n`{codice_pulito}`"
+            return f"Il codice è stato eseguito, ma non ha salvato nulla nella variabile 'risultato'.\n\nCodice generato:\n`{codice_pulito}`"
 
         # 2.5: Controllo anti-Yes-Man (Se il modello ha chiesto un chiarimento)
         if isinstance(valore_esatto, str) and valore_esatto.startswith("CHIARIMENTO:"):
             dubbio_modello = valore_esatto.replace("CHIARIMENTO:", "").strip()
-            return f"🤔 **Ho bisogno di un chiarimento:** {dubbio_modello}"
+            return f"**Ho bisogno di un chiarimento:** {dubbio_modello}"
 
         # ==========================================
         # CERVELLO 2: IL CONSULENTE (Numeri esatti -> Testo)
@@ -69,12 +69,12 @@ def analizza_dati_con_llm(df, domanda_utente):
         # 3. Chiediamo la risposta discorsiva
         risposta_finale = llm.invoke(messaggio_consulente).content.strip()
 
-        risposta_completa = f"{risposta_finale}\n\n---\n*⚙️ Trasparenza - Codice:* \n```python\n{codice_pulito}\n```"
+        risposta_completa = f"{risposta_finale}\n\n---\n*⚙Trasparenza - Codice:* \n```python\n{codice_pulito}\n```"
         return risposta_completa
 
     except Exception as e:
         errore_msg = (
-            f"❌ Errore tecnico o domanda incomprensibile per il modello.\n\n"
+            f"Errore tecnico o domanda incomprensibile per il modello.\n\n"
             f"**Errore:** `{str(e)}`\n\n"
             f"**Codice tentato:**\n```python\n{codice_pulito if 'codice_pulito' in locals() else 'Nessun codice'}\n```"
         )
