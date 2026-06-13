@@ -3,10 +3,10 @@ import pandas as pd
 from llm_agent import analizza_dati_con_llm
 
 # Configurazione della pagina
-st.set_page_config(page_title="AI Finance Tracker", page_icon="💶", layout="centered")
+st.set_page_config(page_title="FinanceQuery_AI", layout="centered")
 
-st.title("💶 Assistente Finanziario AI")
-st.markdown("Usa il modello Qwen 2.5 in locale per analizzare il tuo bilancio.")
+st.title("FinanceQuery_AI")
+st.markdown("Usa il modello llama 3.2 in locale per analizzare il tuo bilancio.")
 
 # Gestione della memoria (Session State) per la cronologia della chat e il dataframe
 if "cronologia" not in st.session_state:
