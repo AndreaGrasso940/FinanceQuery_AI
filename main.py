@@ -1,59 +1,59 @@
 import streamlit as st
 import pandas as pd
-from llm_agent import analizza_dati_con_llm
+from llm_agent import analyze_data_with_llm
 
-# Configurazione della pagina
+# Page Configuration
 st.set_page_config(page_title="FinanceQuery_AI", layout="centered")
 
 st.title("FinanceQuery_AI")
-st.markdown("Usa il modello llama 3.2 in locale per analizzare il tuo bilancio.")
+st.markdown("Use the local llama 3.2 model to analyze your budget.")
 
-# Gestione della memoria (Session State) per la cronologia della chat e il dataframe
-if "cronologia" not in st.session_state:
-    st.session_state.cronologia = []
+# Session State management for chat history and dataframe
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
 
 if "df" not in st.session_state:
     st.session_state.df = None
 
-# --- STEP 1: UPLOAD DEL FILE ---
+# --- STEP 1: FILE UPLOAD ---
 if st.session_state.df is None:
-    st.info("Step 1: Carica il tuo foglio Excel per iniziare.")
-    file_caricato = st.file_uploader("Trascina qui il file .xlsx", type=["xlsx"])
-    
-    if file_caricato is not None:
-        # Leggiamo il file e lo salviamo nella sessione
-        st.session_state.df = pd.read_excel(file_caricato)
-        st.success("File caricato e analizzato correttamente! Clicca il pulsante qui sotto per avviare la chat.")
-        if st.button("Inizia ad analizzare"):
+    st.info("Step 1: Upload your Excel file to start.")
+    uploaded_file = st.file_uploader("Drag and drop the .xlsx file here", type=["xlsx", "csv"])
+
+    if uploaded_file is not None:
+        # Read the file and save it in the session
+        st.session_state.df = pd.read_excel(uploaded_file)
+        st.success("File uploaded and analyzed successfully! Click the button below to start the chat.")
+        if st.button("Start Analyzing"):
             st.rerun()
 
-# --- STEP 2: CHAT CON I DATI ---
+# --- STEP 2: CHAT WITH DATA ---
 else:
-    st.success(f"Dati attivi: tabellone da {len(st.session_state.df)} righe.")
-    
-    # Pulsante per resettare e caricare un nuovo file
-    if st.sidebar.button("Carica un nuovo file"):
+    st.success(f"Active data: board with {len(st.session_state.df)} rows.")
+
+    # Button to reset and upload a new file
+    if st.sidebar.button("Upload a new file"):
         st.session_state.df = None
-        st.session_state.cronologia = []
+        st.session_state.chat_history = []
         st.rerun()
 
-    # Mostra i messaggi passati
-    for messaggio in st.session_state.cronologia:
-        with st.chat_message(messaggio["ruolo"]):
-            st.markdown(messaggio["contenuto"])
+    # Display past messages
+    for message in st.session_state.chat_history:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
 
-    # Input dell'utente
-    domanda_utente = st.chat_input("Es. Quali sono i costi che incidono maggiormente?")
-    
-    if domanda_utente:
-        # Mostra la domanda dell'utente
-        st.chat_message("user").markdown(domanda_utente)
-        st.session_state.cronologia.append({"ruolo": "user", "contenuto": domanda_utente})
-        
-        # Mostra uno spinner di caricamento mentre il modello pensa
-        with st.spinner("L'agente sta analizzando i dati in locale..."):
-            risposta_ai = analizza_dati_con_llm(st.session_state.df, domanda_utente)
-            
-        # Mostra la risposta dell'AI
-        st.chat_message("assistant").markdown(risposta_ai)
-        st.session_state.cronologia.append({"ruolo": "assistant", "contenuto": risposta_ai})
+    # User input
+    user_question = st.chat_input("E.g., Calculate the sum of [Column A] where [Column B] is [Value]'")
+
+    if user_question:
+        # Display user question
+        st.chat_message("user").markdown(user_question)
+        st.session_state.chat_history.append({"role": "user", "content": user_question})
+
+        # Display loading spinner while the model thinks
+        with st.spinner("The agent is analyzing the data locally..."):
+            ai_response = analyze_data_with_llm(st.session_state.df, user_question)
+
+        # Display AI response
+        st.chat_message("assistant").markdown(ai_response)
+        st.session_state.chat_history.append({"role": "assistant", "content": ai_response})
